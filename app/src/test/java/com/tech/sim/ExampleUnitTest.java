@@ -1,4 +1,4 @@
-package com.tech.ditraktir;
+package com.tech.sim;
 
 import org.junit.Test;
 

@@ -1,4 +1,4 @@
-package com.tech.ditraktir;
+package com.tech.sim;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

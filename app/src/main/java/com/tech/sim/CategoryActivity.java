@@ -1,95 +1,129 @@
-package com.tech.ditraktir;
+package com.tech.sim;
 
 import android.app.AlertDialog;
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.tech.ditraktir.adapter.CustomAdapter;
-import com.tech.ditraktir.model.Project;
-import com.tech.ditraktir.model.ProjectItem;
-import com.tech.ditraktir.network.GetDataService;
-import com.tech.ditraktir.network.RetrofitClientInstance;
+import com.tech.sim.adapter.CategoryAdapter;
+import com.tech.sim.adapter.ProjectAdapter;
+import com.tech.sim.model.Category;
+import com.tech.sim.model.CategoryItem;
+import com.tech.sim.model.Project;
+import com.tech.sim.model.ProjectItem;
+import com.tech.sim.network.GetDataService;
+import com.tech.sim.network.RetrofitClientInstance;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity {
-    private CustomAdapter adapter;
+public class CategoryActivity extends AppCompatActivity {
+    private CategoryAdapter adapter;
     private RecyclerView recyclerView;
-    ProgressDialog progressDoalog;
+    private SwipeRefreshLayout swipeContainer;
+    private int id=0;
+    private int category_parent_id=0;
+    private int category_type=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        Bundle extras = getIntent().getExtras();
+
+        if (extras != null) {
+            id=extras.getInt("PROJECT_ID");
+            category_parent_id=extras.getInt("category_parent_id");
+            category_type=extras.getInt("category_type");
+
+            // and get whatever type user account id is
+        }
         loadData();
+
+        swipeContainer = (SwipeRefreshLayout) findViewById(R.id.swipeContainer);
+
+        // Setup refresh listener which triggers new data loading
+        swipeContainer.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                loadData();
+
+            }
+
+        });
+
+        // Configure the refreshing colors
+        swipeContainer.setColorSchemeResources(
+                android.R.color.holo_green_light,
+                android.R.color.holo_blue_bright,
+                android.R.color.holo_orange_light,
+                android.R.color.holo_red_light);
 
     }
     private void loadData(){
-        progressDoalog = new ProgressDialog(MainActivity.this);
-        progressDoalog.setMessage("Loading....");
-        progressDoalog.show();
-
+        //progressDoalog = new ProgressDialog(MainActivity.this);
+        //progressDoalog.setMessage("Loading....");
+        //progressDoalog.show();
 
         /*Create handle for the RetrofitInstance interface*/
         GetDataService service = RetrofitClientInstance.getRetrofitInstance().create(GetDataService.class);
-        Call<Project> call = service.getTraktir();
-        call.enqueue(new Callback<Project>() {
+        Call<Category> call = service.getCategory(category_parent_id,category_type);
+        call.enqueue(new Callback<Category>() {
             @Override
-            public void onResponse(Call<Project> call, Response<Project> response) {
-                progressDoalog.dismiss();
-                Project jsonResponse = response.body();
+            public void onResponse(Call<Category> call, Response<Category> response) {
+                //progressDoalog.dismiss();
+                Category jsonResponse = response.body();
                 //Log.d("TEST", jsonResponse.getStatus());
-                if(jsonResponse.getStatus().equals("success")) {
-                    List<ProjectItem> data = jsonResponse.getData();
-                    if(BuildConfig.VERSION_CODE < jsonResponse.getVersion()){
+                if(jsonResponse.getApi_status().equals(1)) {
+
+                    List<CategoryItem> data = jsonResponse.getData();
+                    /*if(BuildConfig.VERSION_CODE < jsonResponse.getVersion()){
                         showDialogUpdate();
                     }else {
                         generateDataList(data);
-                    }
+                    }*/
+                    //adapter.clear();
+                    swipeContainer.setRefreshing(false);
+                    generateDataList(data);
 
                 }else{
-                    Toast.makeText(MainActivity.this, "Koneksi gangguan...Silakan coba kembali!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CategoryActivity.this, "Koneksi gangguan...Silakan coba kembali!", Toast.LENGTH_SHORT).show();
 
                 }
             }
 
             @Override
-            public void onFailure(Call<Project> call, Throwable t) {
-                progressDoalog.dismiss();
-                Toast.makeText(MainActivity.this, "Koneksi gangguan...Silakan coba kembali!", Toast.LENGTH_SHORT).show();
+            public void onFailure(Call<Category> call, Throwable t) {
+                //progressDoalog.dismiss();
+                Toast.makeText(CategoryActivity.this, "Koneksi gangguan...Silakan coba kembali!", Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     /*Method to generate List of data using RecyclerView with custom adapter*/
-    private void generateDataList(List<ProjectItem> photoList) {
+    private void generateDataList(List<CategoryItem> dataList) {
         recyclerView = findViewById(R.id.customRecyclerView);
-        adapter = new CustomAdapter(this,photoList);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(MainActivity.this);
+        adapter = new CategoryAdapter(this,dataList);
+        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(CategoryActivity.this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(adapter);
     }
 
     private void showDialogUpdate(){
         // Use the Builder class for convenient dialog construction
-        final AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-        builder.setMessage("Agar lebih nyaman dipakai, aplikasi akan membawa kamu update di google play store.. ")
+        final AlertDialog.Builder builder = new AlertDialog.Builder(CategoryActivity.this);
+        builder.setMessage("Ada versi aplikasi yang lebih baru, silakan melanjutkan update di google play store.. ")
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         final String appPackageName = getPackageName(); // getPackageName() from Context or Activity object
@@ -114,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        //getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 

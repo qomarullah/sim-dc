@@ -1,4 +1,4 @@
-package com.tech.ditraktir;
+package com.tech.sim;
 
 import java.security.cert.CertificateException;
 
@@ -10,6 +10,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 
 /**
  * Created by mfstech on 30/08/18.
@@ -17,6 +18,8 @@ import okhttp3.OkHttpClient;
 
 public class UnsafeOkHttpClient {
     public static OkHttpClient getUnsafeOkHttpClient() {
+
+
         try {
             // Create a trust manager that does not validate certificate chains
             final TrustManager[] trustAllCerts = new TrustManager[] {
@@ -52,7 +55,12 @@ public class UnsafeOkHttpClient {
                 }
             });
 
-            OkHttpClient okHttpClient = builder.build();
+
+
+            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
+            logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
+            OkHttpClient okHttpClient =  builder.addInterceptor(logging).build();
+
             return okHttpClient;
         } catch (Exception e) {
             throw new RuntimeException(e);

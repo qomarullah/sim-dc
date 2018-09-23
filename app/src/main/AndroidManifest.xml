@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.tech.ditraktir">
+    package="com.tech.sim">
 
     <!-- Internet Permission -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -20,7 +20,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".PurchaseActivity"></activity>
+        <activity android:name=".MenuActivity"></activity>
+        <activity android:name=".CategoryActivity"></activity>
+        <activity android:name=".ItemActivity"></activity>
     </application>
 
 </manifest>

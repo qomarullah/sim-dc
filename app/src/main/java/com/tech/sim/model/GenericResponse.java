@@ -1,4 +1,4 @@
-package com.tech.ditraktir.model;
+package com.tech.sim.model;
 
 import com.google.gson.annotations.SerializedName;
 

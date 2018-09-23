@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorWhite"
+    tools:context="com.tech.sim.MenuActivity">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_gravity="center_horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="60dp"
+        android:padding="20dp">
+
+        <LinearLayout
+            android:id="@+id/survey"
+            android:orientation="vertical"
+            android:layout_gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <ImageView
+            android:src="@drawable/survey"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="100dp"
+            android:layout_height="100dp"/>
+        <TextView
+            android:textStyle="bold"
+            android:textColor="@color/colorAccent"
+            android:textSize="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="5dp"
+            android:layout_gravity="center_horizontal"
+            android:text="SITE SURVEY" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/observation"
+            android:paddingTop="20dp"
+            android:orientation="vertical"
+            android:layout_gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        <ImageView
+            android:src="@drawable/observation"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+           />
+        <TextView
+            android:textStyle="bold"
+            android:textSize="20dp"
+            android:layout_gravity="center_horizontal"
+            android:textColor="@color/colorAccent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="5dp"
+            android:text="OBSERVATION" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+</RelativeLayout>
